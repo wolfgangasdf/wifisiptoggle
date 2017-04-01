@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.wolle.wifisiptoggle.MainActivity" tools:showIn="@layout/activity_main"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Receive SIP calls:"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="27dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintLeft_toLeftOf="@+id/textView"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <RadioButton
+                android:id="@+id/rbAuto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="auto" />
+
+            <RadioButton
+                android:id="@+id/rbOn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="on"
+                tools:layout_editor_absoluteX="131dp"
+                tools:layout_editor_absoluteY="167dp" />
+
+            <RadioButton
+                android:id="@+id/rbOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="off"
+                tools:layout_editor_absoluteX="237dp"
+                tools:layout_editor_absoluteY="63dp" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Status:"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+        <CheckBox
+            android:id="@+id/cbDoAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="22dp"
+            android:layout_weight="1"
+            android:text="automatically switching"
+            app:layout_constraintLeft_toLeftOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <CheckBox
+            android:id="@+id/cbDoRecv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:text="receiving calls"
+            app:layout_constraintBottom_toTopOf="@+id/btUpdateStatus"
+            app:layout_constraintLeft_toLeftOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/cbDoAuto"
+            app:layout_constraintVertical_bias="0.516" />
+
+        <Button
+            android:id="@+id/btUpdateStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:text="update status"
+            app:layout_constraintLeft_toLeftOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/cbDoRecv" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
