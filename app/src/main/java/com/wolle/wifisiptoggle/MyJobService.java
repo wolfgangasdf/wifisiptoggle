@@ -2,6 +2,9 @@ package com.wolle.wifisiptoggle;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,6 +29,7 @@ public class MyJobService extends JobService {
     static void setReceiveSipCalls(Boolean b) {
         try {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su","-c","settings put system sip_receive_calls " + (b ? "1" : "0")});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su","-c","am broadcast -a com.android.phone.SIP_CALL_OPTION_CHANGED"});
         } catch (IOException e) {
             Log.e("job: ", "error", e);
         }
@@ -47,18 +51,26 @@ public class MyJobService extends JobService {
         return false;
     }
 
+    private String getSSID() {
+        WifiManager wifiManager = (WifiManager) getSystemService (Context.WIFI_SERVICE);
+        WifiInfo info = wifiManager.getConnectionInfo ();
+        if (info.getSSID().equals("<unknown ssid>"))
+            return null;
+        else
+            return info.getSSID();
+    }
     @Override
     public boolean onStartJob(JobParameters params) {
         // Note: this is preformed on the main thread.
-        Log.d(TAG, "onStartJob id=" + params.getJobId());
-        new SetReceiveSipCallsTask().execute(true);
+        Log.d(TAG, "onStartJob id=" + params.getJobId() + " ssid=" + getSSID());
+        if (getSSID() != null) new SetReceiveSipCallsTask().execute(true);
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.d(TAG, "onStopJob id=" + params.getJobId() );
-        new SetReceiveSipCallsTask().execute(false);
+        Log.d(TAG, "onStopJob id=" + params.getJobId() + " ssid=" + getSSID());
+        if (getSSID() == null) new SetReceiveSipCallsTask().execute(false);
         return true;
     }
 

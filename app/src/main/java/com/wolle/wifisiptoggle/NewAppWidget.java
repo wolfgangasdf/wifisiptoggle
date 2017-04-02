@@ -39,18 +39,29 @@ public class NewAppWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    public void onReceive(Context context, Intent intent) {
+        Log.i("WidgetExample", "onReceive ");
+        if (intent.hasExtra("increment")) {
+            Log.i("WidgetExample", " INCREMENT!");
+            SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
+            int number = (sharedPreferences.getInt("MODE", 0) + 1) % 3;
+            sharedPreferences.edit().putInt("MODE", number).apply();
+        }
+        super.onReceive(context, intent); // will call onUpdate below
+    }
 
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.i("WidgetExample", "onUpdate");
         // Get all ids
         ComponentName thisWidget = new ComponentName(context, NewAppWidget.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         for (int widgetId : allWidgetIds) {
             SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
-            int number = (sharedPreferences.getInt("MODE", 0) + 1) % 3;
-            sharedPreferences.edit().putInt("MODE", number).apply();
+            int number = sharedPreferences.getInt("MODE", 0);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            Log.w("WidgetExample", String.valueOf(number));
+            Log.i("WidgetExample", "number=" + String.valueOf(number));
             // Set the text
             remoteViews.setTextViewText(R.id.widgettext, String.valueOf(number));
             int[] cols = new int[]{Color.GRAY, Color.GREEN, Color.RED};
@@ -77,7 +88,7 @@ public class NewAppWidget extends AppWidgetProvider {
 
             intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-
+            intent.putExtra("increment", true);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setOnClickPendingIntent(R.id.widgettext, pendingIntent);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
