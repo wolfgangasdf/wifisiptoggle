@@ -24,55 +24,6 @@
         tools:layout_constraintTop_creator="1">
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Receive SIP calls:"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="27dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintLeft_toLeftOf="@+id/textView"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView">
-
-            <RadioButton
-                android:id="@+id/rbAuto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="auto" />
-
-            <RadioButton
-                android:id="@+id/rbOn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="on"
-                tools:layout_editor_absoluteX="131dp"
-                tools:layout_editor_absoluteY="167dp" />
-
-            <RadioButton
-                android:id="@+id/rbOff"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="off"
-                tools:layout_editor_absoluteX="237dp"
-                tools:layout_editor_absoluteY="63dp" />
-
-        </RadioGroup>
-
-        <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,6 +58,13 @@
             app:layout_constraintLeft_toLeftOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/cbDoAuto"
             app:layout_constraintVertical_bias="0.516" />
+
+        <TextView
+            android:id="@+id/tvTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TextView" />
 
         <Button
             android:id="@+id/btUpdateStatus"
