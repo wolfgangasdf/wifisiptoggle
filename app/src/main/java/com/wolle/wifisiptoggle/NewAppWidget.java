@@ -58,28 +58,32 @@ public class NewAppWidget extends AppWidgetProvider {
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         for (int widgetId : allWidgetIds) {
             SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
-            int number = sharedPreferences.getInt("MODE", 0);
-
+            int currentMode = sharedPreferences.getInt("MODE", 0);
+            boolean oldIsReceiving = MyJobService.getReceiveSipCalls(context);
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            Log.i("WidgetExample", "number=" + String.valueOf(number));
+            Log.i("WidgetExample", "currentMode=" + String.valueOf(currentMode));
             // Set the text
-            remoteViews.setTextViewText(R.id.widgettext, String.valueOf(number));
+            remoteViews.setTextViewText(R.id.widgettext, String.valueOf(currentMode));
             int[] cols = new int[]{Color.GRAY, Color.GREEN, Color.RED};
-            remoteViews.setTextColor(R.id.widgettext, cols[number]);
+            if (currentMode != 0) remoteViews.setTextColor(R.id.widgettext, cols[currentMode]);
 
-            switch (number) {
+            switch (currentMode) {
                 case 0:
                     scheduleJob(context);
                     break;
                 case 1:
                     killJob(context);
-                    MyJobService.setReceiveSipCalls(true);
-                    Toast.makeText(context, "SIP receive calls (w)=true", Toast.LENGTH_LONG).show();
+                    if (!oldIsReceiving) {
+                        MyJobService.setReceiveSipCalls(true);
+                        Toast.makeText(context, "SIP receive calls (w)=true", Toast.LENGTH_LONG).show();
+                    }
                     break;
                 case 2:
                     killJob(context);
-                    MyJobService.setReceiveSipCalls(false);
-                    Toast.makeText(context, "SIP receive calls (w)=false", Toast.LENGTH_LONG).show();
+                    if (oldIsReceiving) {
+                        MyJobService.setReceiveSipCalls(false);
+                        Toast.makeText(context, "SIP receive calls (w)=false", Toast.LENGTH_LONG).show();
+                    }
                     break;
             }
 

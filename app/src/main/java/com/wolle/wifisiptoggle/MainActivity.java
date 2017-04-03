@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         protected Boolean[] doInBackground(Void... voids) {
             JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
             JobInfo ji = scheduler.getPendingJob(JOB_ID);
-            Boolean res1 = MyJobService.getReceiveSipCalls();
+            Boolean res1 = MyJobService.getReceiveSipCalls(getApplicationContext());
             Boolean res2 = ji != null;
             return new Boolean[]{res1, res2};
         }
