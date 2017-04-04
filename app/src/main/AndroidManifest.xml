@@ -29,7 +29,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
-            android:name=".NewAppWidget"
+            android:name=".MyWidget"
             android:label="WifiSipWidget"
             >
             <intent-filter>

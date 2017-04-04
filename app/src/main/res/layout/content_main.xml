@@ -24,59 +24,94 @@
         tools:layout_constraintTop_creator="1">
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Status:"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
-
-        <CheckBox
-            android:id="@+id/cbDoAuto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="22dp"
-            android:layout_weight="1"
-            android:text="automatically switching"
-            app:layout_constraintLeft_toLeftOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-        <CheckBox
-            android:id="@+id/cbDoRecv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="receiving calls"
-            app:layout_constraintBottom_toTopOf="@+id/btUpdateStatus"
-            app:layout_constraintLeft_toLeftOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/cbDoAuto"
-            app:layout_constraintVertical_bias="0.516" />
-
-        <TextView
-            android:id="@+id/tvTest"
+            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="Enable SIP receive for these SSIDs:"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/tvSSIDs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="Enter allowed SSIDs"
+            android:inputType="text"
+            android:textAlignment="viewStart"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
         <Button
-            android:id="@+id/btUpdateStatus"
+            android:id="@+id/btAddCurrentSSID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:text="update status"
-            app:layout_constraintLeft_toLeftOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/cbDoRecv" />
+            android:gravity="center"
+            android:text="Add current SSID" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btUpdateStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="update status"
+                app:layout_constraintLeft_toLeftOf="@+id/tvSSIDs"
+                app:layout_constraintTop_toBottomOf="@+id/cbDoRecv" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/cbDoAuto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_weight="1"
+                    android:text="automatically switching"
+                    app:layout_constraintLeft_toLeftOf="@+id/tvSSIDs"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSSIDs" />
+
+                <CheckBox
+                    android:id="@+id/cbDoRecv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:text="receiving calls"
+                    app:layout_constraintBottom_toTopOf="@+id/btUpdateStatus"
+                    app:layout_constraintLeft_toLeftOf="@+id/tvSSIDs"
+                    app:layout_constraintTop_toBottomOf="@+id/cbDoAuto"
+                    app:layout_constraintVertical_bias="0.516" />
+
+                <TextView
+                    android:id="@+id/tvTest"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

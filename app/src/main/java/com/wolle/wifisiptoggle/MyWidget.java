@@ -9,12 +9,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-public class NewAppWidget extends AppWidgetProvider {
+public class MyWidget extends AppWidgetProvider {
+
+    private static String TAG = MyWidget.class.getSimpleName();
 
     private void killJob(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -34,15 +35,14 @@ public class NewAppWidget extends AppWidgetProvider {
         int result = scheduler.schedule(jobInfo);
         if (result == JobScheduler.RESULT_SUCCESS) {
             Toast.makeText(context, "Started job", Toast.LENGTH_LONG).show();
-            Log.i(MainActivity.TAG, "started job!");
+            Log.i(TAG, "started job!");
         }
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("WidgetExample", "onReceive ");
+        Log.i(TAG, "onReceive ");
         if (intent.hasExtra("increment")) {
-            Log.i("WidgetExample", " INCREMENT!");
             SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
             int number = (sharedPreferences.getInt("MODE", 0) + 1) % 3;
             sharedPreferences.edit().putInt("MODE", number).apply();
@@ -52,21 +52,16 @@ public class NewAppWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.i("WidgetExample", "onUpdate");
-        // Get all ids
-        ComponentName thisWidget = new ComponentName(context, NewAppWidget.class);
+        Log.i(TAG, "onUpdate");
+        ComponentName thisWidget = new ComponentName(context, MyWidget.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         for (int widgetId : allWidgetIds) {
             SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
             int currentMode = sharedPreferences.getInt("MODE", 0);
             boolean oldIsReceiving = MyJobService.getReceiveSipCalls(context);
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            Log.i("WidgetExample", "currentMode=" + String.valueOf(currentMode));
-            // Set the text
+            Log.i(TAG, "currentMode=" + String.valueOf(currentMode));
             remoteViews.setTextViewText(R.id.widgettext, String.valueOf(currentMode));
-            int[] cols = new int[]{Color.GRAY, Color.GREEN, Color.RED};
-            if (currentMode != 0) remoteViews.setTextColor(R.id.widgettext, cols[currentMode]);
-
             switch (currentMode) {
                 case 0:
                     scheduleJob(context);
@@ -74,22 +69,21 @@ public class NewAppWidget extends AppWidgetProvider {
                 case 1:
                     killJob(context);
                     if (!oldIsReceiving) {
-                        MyJobService.setReceiveSipCalls(true);
+                        MyJobService.setReceiveSipCalls(context, true);
                         Toast.makeText(context, "SIP receive calls (w)=true", Toast.LENGTH_LONG).show();
                     }
                     break;
                 case 2:
                     killJob(context);
                     if (oldIsReceiving) {
-                        MyJobService.setReceiveSipCalls(false);
+                        MyJobService.setReceiveSipCalls(context, false);
                         Toast.makeText(context, "SIP receive calls (w)=false", Toast.LENGTH_LONG).show();
                     }
                     break;
             }
 
             // Register an onClickListener
-            Intent intent = new Intent(context, NewAppWidget.class);
-
+            Intent intent = new Intent(context, MyWidget.class);
             intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
             intent.putExtra("increment", true);

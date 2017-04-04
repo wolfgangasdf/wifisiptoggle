@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +19,6 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     public static int JOB_ID = 1;
-    public static String TAG = "WifiSipToggle";
 
     private class UpdateStatusTask extends AsyncTask<Void, Void, Boolean[]> {
         @Override
@@ -57,6 +58,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        TextView tvSSIDs = (TextView)findViewById(R.id.tvSSIDs);
+        Button btAddCurrentSSID = (Button)findViewById(R.id.btAddCurrentSSID);
+        btAddCurrentSSID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ssid = MyJobService.getSSID(getApplicationContext());
+                if (ssid != null) ((TextView)findViewById(R.id.tvSSIDs)).append(ssid + ",");
+            }
+        });
+
+        tvSSIDs.setText(getSharedPreferences("WifiSipToggle", 0).getString("ssids", ""));
+        tvSSIDs.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                SharedPreferences sharedPreferences = getSharedPreferences("WifiSipToggle", 0);
+                sharedPreferences.edit().putString("ssids", charSequence.toString()).apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 
     @Override
