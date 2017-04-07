@@ -30,13 +30,15 @@
             android:layout_weight="1"
             android:text="Enable SIP receive for these SSIDs:"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:labelFor="@+id/tvSSIDs"/>
 
         <EditText
             android:id="@+id/tvSSIDs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@android:color/holo_orange_light"
             android:contentDescription="Enter allowed SSIDs"
             android:inputType="text"
             android:textAlignment="viewStart"
@@ -61,10 +63,9 @@
                 android:id="@+id/btUpdateStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_weight="1"
+                android:gravity="center"
                 android:text="update status"
                 app:layout_constraintLeft_toLeftOf="@+id/tvSSIDs"
                 app:layout_constraintTop_toBottomOf="@+id/cbDoRecv" />
@@ -72,14 +73,12 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <CheckBox
                     android:id="@+id/cbDoAuto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="22dp"
                     android:layout_weight="1"
@@ -92,7 +91,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_weight="1"

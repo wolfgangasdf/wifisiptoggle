@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 public class MyWidget extends AppWidgetProvider {
 
-    private static String TAG = MyWidget.class.getSimpleName();
+    private static final String TAG = MyWidget.class.getSimpleName();
 
     private void killJob(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -34,7 +34,7 @@ public class MyWidget extends AppWidgetProvider {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
         if (result == JobScheduler.RESULT_SUCCESS) {
-            Toast.makeText(context, "Started job", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "WifiSipToggle: Started job", Toast.LENGTH_LONG).show();
             Log.i(TAG, "started job!");
         }
     }
@@ -55,41 +55,39 @@ public class MyWidget extends AppWidgetProvider {
         Log.i(TAG, "onUpdate");
         ComponentName thisWidget = new ComponentName(context, MyWidget.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-        for (int widgetId : allWidgetIds) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
-            int currentMode = sharedPreferences.getInt("MODE", 0);
-            boolean oldIsReceiving = MyJobService.getReceiveSipCalls(context);
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            Log.i(TAG, "currentMode=" + String.valueOf(currentMode));
-            remoteViews.setTextViewText(R.id.widgettext, String.valueOf(currentMode));
-            switch (currentMode) {
-                case 0:
-                    scheduleJob(context);
-                    break;
-                case 1:
-                    killJob(context);
-                    if (!oldIsReceiving) {
-                        MyJobService.setReceiveSipCalls(context, true);
-                        Toast.makeText(context, "SIP receive calls (w)=true", Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                case 2:
-                    killJob(context);
-                    if (oldIsReceiving) {
-                        MyJobService.setReceiveSipCalls(context, false);
-                        Toast.makeText(context, "SIP receive calls (w)=false", Toast.LENGTH_LONG).show();
-                    }
-                    break;
-            }
-
-            // Register an onClickListener
-            Intent intent = new Intent(context, MyWidget.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            intent.putExtra("increment", true);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.widgettext, pendingIntent);
-            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
+        int currentMode = sharedPreferences.getInt("MODE", 0);
+        boolean oldIsReceiving = MyJobService.getReceiveSipCalls(context);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
+        Log.i(TAG, "currentMode=" + String.valueOf(currentMode));
+        remoteViews.setTextViewText(R.id.widgettext, currentMode == 0 ? "A" : "M");
+        switch (currentMode) {
+            case 0:
+                scheduleJob(context);
+                break;
+            case 1:
+                killJob(context);
+                if (!oldIsReceiving) {
+                    MyJobService.setReceiveSipCalls(context, true);
+                    Toast.makeText(context, "WifiSipToggle: SIPrecv on!", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 2:
+                killJob(context);
+                if (oldIsReceiving) {
+                    MyJobService.setReceiveSipCalls(context, false);
+                    Toast.makeText(context, "WifiSipToggle: SIPrecv off!", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
+
+        // Register an onClickListener
+        Intent intent = new Intent(context, MyWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        intent.putExtra("increment", true);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.widgetlayout, pendingIntent);
+        appWidgetManager.updateAppWidget(allWidgetIds, remoteViews);
     }
 }

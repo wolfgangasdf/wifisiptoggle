@@ -18,7 +18,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    public static int JOB_ID = 1;
+    public static final int JOB_ID = 1;
 
     private class UpdateStatusTask extends AsyncTask<Void, Void, Boolean[]> {
         @Override

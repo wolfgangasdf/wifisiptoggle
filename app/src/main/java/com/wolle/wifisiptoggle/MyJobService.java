@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MyJobService extends JobService {
-    static final String TAG = MyJobService.class.getSimpleName();
+    private static final String TAG = MyJobService.class.getSimpleName();
 
     private class SetReceiveSipCallsTask extends AsyncTask<Boolean, Void, Boolean> {
         @Override
@@ -30,7 +30,7 @@ public class MyJobService extends JobService {
         }
         @Override
         protected void onPostExecute(Boolean aBoolean) { // on main thread
-            Toast.makeText(getApplicationContext(), "SIP receive calls (a)=" + String.valueOf(aBoolean), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "WifiSipToggle: SIPrecv (a)=" + String.valueOf(aBoolean), Toast.LENGTH_LONG).show();
         }
     }
 

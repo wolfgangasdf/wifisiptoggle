@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout"
+    android:id="@+id/widgetlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dip"
-    android:background="@drawable/myshape" >
+    android:layout_margin="2dip"
+    android:background="@drawable/myshape"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/widgettext"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="4dip"
         android:gravity="center_horizontal|center_vertical"
         android:text="Static Text"
         android:textSize="24sp"
-        android:textStyle="bold"></TextView>
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SIPrecv"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 
 </LinearLayout>
