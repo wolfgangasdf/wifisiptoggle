@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -16,27 +17,46 @@ import android.widget.Toast;
 public class MyWidget extends AppWidgetProvider {
 
     private static final String TAG = MyWidget.class.getSimpleName();
+    public static final int JOB_ID = 1;
+
+    private static boolean firstRun = false;
 
     private void killJob(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        scheduler.cancel(MainActivity.JOB_ID);
+        scheduler.cancel(JOB_ID);
     }
 
     private void scheduleJob(Context context) {
-        ComponentName serviceName = new ComponentName(context, MyJobService.class);
-        JobInfo jobInfo = new JobInfo.Builder(MainActivity.JOB_ID, serviceName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-//                .setOverrideDeadline(400) // Remove comment for faster testing.
-                .build();
-
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        int result = scheduler.schedule(jobInfo);
-        if (result == JobScheduler.RESULT_SUCCESS) {
-            Toast.makeText(context, "WifiSipToggle: Started job", Toast.LENGTH_LONG).show();
-            Log.i(TAG, "started job!");
+        Log.i(TAG, "scheduleJob: " + scheduler.getPendingJob(JOB_ID));
+        if (scheduler.getPendingJob(JOB_ID) == null) {
+            ComponentName serviceName = new ComponentName(context, MyJobService.class);
+            JobInfo jobInfo = new JobInfo.Builder(JOB_ID, serviceName)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .build();
+
+            int result = scheduler.schedule(jobInfo);
+            if (result == JobScheduler.RESULT_SUCCESS) {
+                Toast.makeText(context, "WifiSipToggle: Started job", Toast.LENGTH_LONG).show();
+                Log.i(TAG, "started job!");
+            }
         }
+    }
+
+    @Override
+    public void onDisabled(Context context) {
+        super.onDisabled(context);
+        Log.i(TAG, "onDisabled ");
+        killJob(context);
+    }
+
+    @Override
+    public void onEnabled(Context context) {
+        super.onEnabled(context);
+        Log.i(TAG, "onEnabled ");
+        firstRun = true;
     }
 
     @Override
@@ -59,8 +79,12 @@ public class MyWidget extends AppWidgetProvider {
         int currentMode = sharedPreferences.getInt("MODE", 0);
         boolean oldIsReceiving = MyJobService.getReceiveSipCalls(context);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-        Log.i(TAG, "currentMode=" + String.valueOf(currentMode));
+        Log.i(TAG, "currentMode=" + String.valueOf(currentMode) + " firstRun=" + firstRun);
         remoteViews.setTextViewText(R.id.widgettext, currentMode == 0 ? "A" : "M");
+        if (firstRun) {
+            remoteViews.setTextColor(R.id.widgettext, oldIsReceiving ? Color.GREEN : Color.RED);
+            firstRun = false;
+        }
         switch (currentMode) {
             case 0:
                 scheduleJob(context);

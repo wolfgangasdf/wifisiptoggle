@@ -18,13 +18,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    public static final int JOB_ID = 1;
 
     private class UpdateStatusTask extends AsyncTask<Void, Void, Boolean[]> {
         @Override
         protected Boolean[] doInBackground(Void... voids) {
             JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            JobInfo ji = scheduler.getPendingJob(JOB_ID);
+            JobInfo ji = scheduler.getPendingJob(MyWidget.JOB_ID);
             Boolean res1 = MyJobService.getReceiveSipCalls(getApplicationContext());
             Boolean res2 = ji != null;
             return new Boolean[]{res1, res2};
