@@ -4,12 +4,14 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.sip.SipManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MyWidget.class.getSimpleName();
 
     private class UpdateStatusTask extends AsyncTask<Void, Void, Boolean[]> {
         @Override
@@ -45,7 +48,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button btUpdateStatus = (Button)findViewById(R.id.btUpdateStatus);
+        final CheckBox cbDisableAutoCompletely = (CheckBox)findViewById(R.id.cbDisableAutoCompletely);
+        cbDisableAutoCompletely.setChecked(getSharedPreferences("WifiSipToggle", 0).getBoolean("disableautocompletely", false));
+        cbDisableAutoCompletely.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Log.i(TAG, "onclick: checked = " + cbDisableAutoCompletely.isChecked());
+               SharedPreferences sharedPreferences = getSharedPreferences("WifiSipToggle", 0);
+               sharedPreferences.edit().putBoolean("disableautocompletely", cbDisableAutoCompletely.isChecked()).apply();
+           }
+        });
+
+        Button btUpdateStatus = (Button) findViewById(R.id.btUpdateStatus);
         btUpdateStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,19 +68,12 @@ public class MainActivity extends AppCompatActivity {
                 int number = sharedPreferences.getInt("MODE", 0);
                 TextView tv = (TextView)findViewById(R.id.tvTest);
                 tv.setText(String.valueOf(number));
+                Log.i(TAG, "isSipWifiOnly: " + SipManager.isSipWifiOnly(getApplicationContext()));
+                // can't change this option...
             }
         });
 
         TextView tvSSIDs = (TextView)findViewById(R.id.tvSSIDs);
-        Button btAddCurrentSSID = (Button)findViewById(R.id.btAddCurrentSSID);
-        btAddCurrentSSID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String ssid = MyJobService.getSSID(getApplicationContext());
-                if (ssid != null) ((TextView)findViewById(R.id.tvSSIDs)).append(ssid + ",");
-            }
-        });
-
         tvSSIDs.setText(getSharedPreferences("WifiSipToggle", 0).getString("ssids", ""));
         tvSSIDs.addTextChangedListener(new TextWatcher() {
             @Override
@@ -81,6 +88,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        Button btAddCurrentSSID = (Button)findViewById(R.id.btAddCurrentSSID);
+        btAddCurrentSSID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ssid = MyJobService.getSSID(getApplicationContext());
+                if (ssid != null) ((TextView)findViewById(R.id.tvSSIDs)).append(ssid + ",");
             }
         });
     }

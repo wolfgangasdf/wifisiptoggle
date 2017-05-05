@@ -19,8 +19,6 @@ public class MyWidget extends AppWidgetProvider {
     private static final String TAG = MyWidget.class.getSimpleName();
     public static final int JOB_ID = 1;
 
-    private static boolean firstRun = false;
-
     private void killJob(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         scheduler.cancel(JOB_ID);
@@ -56,7 +54,6 @@ public class MyWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         super.onEnabled(context);
         Log.i(TAG, "onEnabled ");
-        firstRun = true;
     }
 
     @Override
@@ -65,6 +62,7 @@ public class MyWidget extends AppWidgetProvider {
         if (intent.hasExtra("increment")) {
             SharedPreferences sharedPreferences = context.getSharedPreferences("WifiSipToggle", 0);
             int number = (sharedPreferences.getInt("MODE", 0) + 1) % 3;
+            if (sharedPreferences.getBoolean("disableautocompletely", false) && number == 0) number = 1;
             sharedPreferences.edit().putInt("MODE", number).apply();
         }
         super.onReceive(context, intent); // will call onUpdate below
@@ -79,12 +77,9 @@ public class MyWidget extends AppWidgetProvider {
         int currentMode = sharedPreferences.getInt("MODE", 0);
         boolean oldIsReceiving = MyJobService.getReceiveSipCalls(context);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-        Log.i(TAG, "currentMode=" + String.valueOf(currentMode) + " firstRun=" + firstRun);
+        Log.i(TAG, "currentMode=" + String.valueOf(currentMode));
         remoteViews.setTextViewText(R.id.widgettext, currentMode == 0 ? "A" : "M");
-        if (firstRun) {
-            remoteViews.setTextColor(R.id.widgettext, oldIsReceiving ? Color.GREEN : Color.RED);
-            firstRun = false;
-        }
+        boolean updatecolorhere = true;
         switch (currentMode) {
             case 0:
                 scheduleJob(context);
@@ -93,6 +88,7 @@ public class MyWidget extends AppWidgetProvider {
                 killJob(context);
                 if (!oldIsReceiving) {
                     MyJobService.setReceiveSipCalls(context, true);
+                    updatecolorhere = false;
                     Toast.makeText(context, "WifiSipToggle: SIPrecv on!", Toast.LENGTH_LONG).show();
                 }
                 break;
@@ -100,9 +96,13 @@ public class MyWidget extends AppWidgetProvider {
                 killJob(context);
                 if (oldIsReceiving) {
                     MyJobService.setReceiveSipCalls(context, false);
+                    updatecolorhere = false;
                     Toast.makeText(context, "WifiSipToggle: SIPrecv off!", Toast.LENGTH_LONG).show();
                 }
                 break;
+        }
+        if (updatecolorhere) {
+            remoteViews.setTextColor(R.id.widgettext, oldIsReceiving ? Color.GREEN : Color.RED);
         }
 
         // Register an onClickListener

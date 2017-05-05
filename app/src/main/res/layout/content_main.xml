@@ -23,15 +23,22 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1">
 
+        <CheckBox
+            android:id="@+id/cbDisableAutoCompletely"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Disable automatic switching completely" />
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Enable SIP receive for these SSIDs:"
+            android:labelFor="@+id/tvSSIDs"
+            android:text="If automatic: Enable SIP receive for these SSIDs (empty: allow all):"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:labelFor="@+id/tvSSIDs"/>
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/tvSSIDs"
