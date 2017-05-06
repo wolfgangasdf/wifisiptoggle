@@ -76,28 +76,40 @@ public class MyJobService extends JobService {
             return info.getSSID().replaceAll("\"", "");
     }
 
-    @Override
-    public boolean onStartJob(JobParameters params) { // on main thread
-        Log.i(TAG, "onStartJob id=" + params.getJobId() + " ssid=" + getSSID(this));
-        String ssid = getSSID(this);
+    private void autoUpdateSipRecv(Context context) {
+        String ssid = getSSID(context);
+        boolean dosip = false;
         if (ssid != null) {
             List<String> ssids = new ArrayList<>(Arrays.asList(getSharedPreferences("WifiSipToggle", 0).getString("ssids", "").split(",")));
             if (ssids.size() == 1 && "".equals(ssids.get(0))) ssids.clear();
-            if (ssids.contains(ssid) || ssids.isEmpty()) {
-                if (!getReceiveSipCalls(getApplicationContext())) new SetReceiveSipCallsTask().execute(true);
-            } else {
-                if (getReceiveSipCalls(getApplicationContext())) new SetReceiveSipCallsTask().execute(false);
-            }
+            if (ssids.contains(ssid) || ssids.isEmpty()) dosip = true;
         }
+        Log.i(TAG, "updatesip: ssid=" + ssid + " dosip=" + dosip);
+        if (dosip) {
+            if (!getReceiveSipCalls(getApplicationContext())) new SetReceiveSipCallsTask().execute(true);
+        } else {
+            if (getReceiveSipCalls(getApplicationContext())) new SetReceiveSipCallsTask().execute(false);
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        Log.i(TAG, "onCreate");
+        super.onCreate();
+        autoUpdateSipRecv(this);
+    }
+
+    @Override
+    public boolean onStartJob(JobParameters params) { // on main thread
+        Log.i(TAG, "onStartJob id=" + params.getJobId());
+        autoUpdateSipRecv(this);
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.i(TAG, "onStopJob id=" + params.getJobId() + " ssid=" + getSSID(this));
-        if (getSSID(this) == null) {
-            if (getReceiveSipCalls(getApplicationContext())) new SetReceiveSipCallsTask().execute(false);
-        }
+        Log.i(TAG, "onStopJob id=" + params.getJobId());
+        autoUpdateSipRecv(this);
         return true;
     }
 
