@@ -1,8 +1,5 @@
 package com.wolle.wifisiptoggle;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.sip.SipManager;
 import android.os.AsyncTask;
@@ -25,11 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private class UpdateStatusTask extends AsyncTask<Void, Void, Boolean[]> {
         @Override
         protected Boolean[] doInBackground(Void... voids) {
-            JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            JobInfo ji = scheduler.getPendingJob(MyWidget.JOB_ID);
-            Boolean res1 = MyJobService.getReceiveSipCalls(getApplicationContext());
-            Boolean res2 = ji != null;
-            return new Boolean[]{res1, res2};
+            Boolean res1 = BackgroundService.getReceiveSipCalls(getApplicationContext());
+            return new Boolean[]{res1, BackgroundService.isrunning};
         }
 
         @Override
@@ -95,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         btAddCurrentSSID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String ssid = MyJobService.getSSID(getApplicationContext());
+                String ssid = BackgroundService.getSSID(getApplicationContext());
                 if (ssid != null) ((TextView)findViewById(R.id.tvSSIDs)).append(ssid + ",");
             }
         });

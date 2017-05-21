@@ -1,15 +1,21 @@
 package com.wolle.wifisiptoggle;
 
-import android.app.job.JobParameters;
-import android.app.job.JobService;
+import android.app.Notification;
+import android.app.Service;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.IBinder;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -19,8 +25,76 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MyJobService extends JobService {
-    private static final String TAG = MyJobService.class.getSimpleName();
+public class BackgroundService extends Service {
+    private String TAG = "BGS";
+    private BroadcastReceiver bcReceiver;
+    public static boolean isrunning = false;
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.i(TAG, "BGS: onbind: " + intent);
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        Log.i(TAG, "BGS: oncreate!");
+        super.onCreate();
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle("title1")
+                .setContentText("msg1")
+//                .setSmallIcon(R.drawable.icon)
+//                    .setContentIntent(pendingIntent)
+                .setTicker("ticker1")
+                .build();
+
+        final IntentFilter theFilter = new IntentFilter();
+        theFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        bcReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.i(TAG, "BGS: onrecv!!!!!!" + intent);
+                autoUpdateSipRecv(context);
+                Toast.makeText(context, "Broadcast Successful!!!", Toast.LENGTH_LONG).show();
+            }
+        };
+        // Registers the receiver so that your service will listen for
+        // broadcasts
+        this.registerReceiver(bcReceiver, theFilter);
+
+        startForeground(101, notification);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "BGS: ondestroy!");
+        super.onDestroy();
+        // Do not forget to unregister the receiver!!!
+        this.unregisterReceiver(bcReceiver);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "onstart: " + flags + " " + startId);
+        return START_STICKY;
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.i(TAG, "ontaskrem");
+        super.onTaskRemoved(rootIntent);
+    }
+
+
+
+
+
+
+
+
 
     private class SetReceiveSipCallsTask extends AsyncTask<Boolean, Void, Boolean> {
         @Override
@@ -92,26 +166,8 @@ public class MyJobService extends JobService {
         }
     }
 
-    @Override
-    public void onCreate() {
-        Log.i(TAG, "onCreate");
-        super.onCreate();
-        autoUpdateSipRecv(this);
-    }
 
-    @Override
-    public boolean onStartJob(JobParameters params) { // on main thread
-        Log.i(TAG, "onStartJob id=" + params.getJobId());
-        autoUpdateSipRecv(this);
-        return true;
-    }
 
-    @Override
-    public boolean onStopJob(JobParameters params) {
-        Log.i(TAG, "onStopJob id=" + params.getJobId());
-        autoUpdateSipRecv(this);
-        return true;
-    }
 
 
 }
