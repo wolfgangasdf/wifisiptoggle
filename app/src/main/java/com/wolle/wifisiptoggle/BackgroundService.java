@@ -1,6 +1,7 @@
 package com.wolle.wifisiptoggle;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -29,6 +30,8 @@ public class BackgroundService extends Service {
     private String TAG = "BGS";
     private BroadcastReceiver bcReceiver;
     public static boolean isrunning = false;
+    private final static int NOTIFICATIONID = 101;
+    private static Notification.Builder notificationbuilder;
 
     @Nullable
     @Override
@@ -42,13 +45,12 @@ public class BackgroundService extends Service {
         Log.i(TAG, "BGS: oncreate!");
         super.onCreate();
 
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle("title1")
-                .setContentText("msg1")
-//                .setSmallIcon(R.drawable.icon)
+        notificationbuilder = new Notification.Builder(this)
+                .setContentTitle("Automatic SIP receive call switching based on wifi")
+                .setContentText("This notification has to be present")
+                .setSmallIcon(R.mipmap.ic_stat_wst)
 //                    .setContentIntent(pendingIntent)
-                .setTicker("ticker1")
-                .build();
+                .setTicker("ticker1");
 
         final IntentFilter theFilter = new IntentFilter();
         theFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -58,14 +60,13 @@ public class BackgroundService extends Service {
             public void onReceive(Context context, Intent intent) {
                 Log.i(TAG, "BGS: onrecv!!!!!!" + intent);
                 autoUpdateSipRecv(context);
-                Toast.makeText(context, "Broadcast Successful!!!", Toast.LENGTH_LONG).show();
+                // Toast.makeText(context, "Broadcast Successful!!!", Toast.LENGTH_LONG).show();
             }
         };
-        // Registers the receiver so that your service will listen for
-        // broadcasts
+
         this.registerReceiver(bcReceiver, theFilter);
 
-        startForeground(101, notification);
+        startForeground(NOTIFICATIONID, notificationbuilder.build());
     }
 
     @Override
@@ -87,14 +88,6 @@ public class BackgroundService extends Service {
         Log.i(TAG, "ontaskrem");
         super.onTaskRemoved(rootIntent);
     }
-
-
-
-
-
-
-
-
 
     private class SetReceiveSipCallsTask extends AsyncTask<Boolean, Void, Boolean> {
         @Override
@@ -121,6 +114,11 @@ public class BackgroundService extends Service {
             ComponentName thisWidget = new ComponentName(context, MyWidget.class);
             remoteViews.setTextColor(R.id.widgettext, col);
             appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
+            final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationbuilder.setContentText("Receive SIP calls: " + b);
+            manager.notify(NOTIFICATIONID, notificationbuilder.build());
+
         } catch (IOException e) {
             Log.e("job: ", "error", e);
         }
